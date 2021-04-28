@@ -20,7 +20,7 @@ stages:
       solution: '**/*.sln'
       buildPlatform: 'Any CPU'
       buildConfiguration: 'Release'
-    
+
     steps:
     - task: NuGetToolInstaller@1
 
@@ -47,6 +47,7 @@ stages:
     pool: 
       vmImage: 'windows-latest'
     steps:
+
     - task: AzureCLI@2
       inputs:
         azureSubscription: 'labAzureSubscription'
@@ -55,12 +56,12 @@ stages:
         inlineScript: |
           # create a resource group
           az group create -l $LOCATION -n $RESOURCEGROUPNAME
-          
+
           # create and configure Azure SQL logical server and Azure SQL database
           az sql server create -l $LOCATION -g $RESOURCEGROUPNAME -n $SQLSRVNAME -u $(USERNAME) -p $(PASSWORD)
           az sql db create -g $RESOURCEGROUPNAME -s $SQLSRVNAME -n $DBNAME --service-objective Basic
           az sql server firewall-rule create -g $RESOURCEGROUPNAME -s $SQLSRVNAME -n allowazure --start-ip-address 0.0.0.0 --end-ip-address 0.0.0.0
-          
+
           # create and configure an Azure App Service plan and an Azure web app
           az appservice plan create -g $RESOURCEGROUPNAME -n $SVCPLANNAME --sku FREE
           az webapp create -g $RESOURCEGROUPNAME -p $SVCPLANNAME -n $WEBAPPNAME
